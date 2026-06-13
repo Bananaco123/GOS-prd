@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PRD · OS-SCRM WhatsApp IM V1</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>/* ============================================================
+   PRD-HTML 设计系统样式表
+   提取自 Clive 教学管理后台 PRD（prd-clive-teaching-admin.html）
+   直接 <link> 或内联到 <style> 即可复用。
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  --sidebar-bg: #1a1a2e;       /* 深藏青侧边栏 / 表头 */
+  --sidebar-w: 272px;
+  --accent: #c9a227;           /* 金色主强调色 */
+  --accent-pale: rgba(201,162,39,.12);
+  --topbar-h: 52px;
+  --text-main: #1a202c;
+  --text-muted: #718096;
+  --border: #e2e8f0;
+  --content-max: 880px;        /* 正文最大宽度，保证阅读行长 */
+}
+
+html, body {
+  margin: 0; height: 100%;
+  font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: #f8f9fc; color: var(--text-main);
+}
+
+/* ── Topbar 顶栏 ── */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  height: var(--topbar-h); background: var(--sidebar-bg);
+  display: flex; align-items: center; padding: 0 20px; gap: 10px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.topbar-brand { font-weight: 700; font-size: 15px; color: var(--accent); }
+.topbar-sep { color: #3a4a6b; }
+.topbar-title { font-size: 13.5px; color: #aab4cc; }
+.topbar-badges { margin-left: auto; display: flex; gap: 8px; }
+.topbar-badge { font-size: 11.5px; color: #718096; background: rgba(255,255,255,.06); padding: 3px 10px; border-radius: 20px; }
+.topbar-badge.warn { color: var(--accent); background: var(--accent-pale); }
+
+/* ── Layout 布局 ── */
+.layout { display: flex; height: 100vh; padding-top: var(--topbar-h); }
+
+/* ── Sidebar 侧边栏 ── */
+.sidebar {
+  width: var(--sidebar-w); flex-shrink: 0;
+  background: var(--sidebar-bg); overflow-y: auto; overflow-x: hidden; height: 100%;
+  border-right: 1px solid rgba(255,255,255,.06);
+}
+.sidebar::-webkit-scrollbar { width: 3px; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 2px; }
+
+/* Nav 多级目录（核心：长需求名结构化拆解为左侧层级） */
+.nav-hd { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #3d4f70; font-weight: 700; padding: 18px 16px 8px; }
+.nav-divider { height: 1px; background: rgba(255,255,255,.05); margin: 6px 14px; }
+.nav-item {
+  display: flex; align-items: center; gap: 6px; padding: 7px 16px;
+  color: #7c8faa; font-size: 12.5px; line-height: 1.4; cursor: pointer;
+  border-left: 3px solid transparent; text-decoration: none;
+  transition: background .12s, color .12s;
+}
+.nav-item:hover { background: rgba(255,255,255,.05); color: #c5d0e4; }
+.nav-item.active { color: var(--accent); background: var(--accent-pale); border-left-color: var(--accent); }
+.nav-item.lvl1 { font-weight: 600; font-size: 13px; color: #9aacc2; padding: 8px 16px; margin-top: 2px; }
+.nav-item.lvl1:hover { color: #e0e8f8; }
+.nav-item.lvl2 { padding-left: 26px; }
+.nav-item.lvl3 { padding-left: 38px; font-size: 12px; color: #5e7091; }
+.nav-item.lvl3:hover { color: #9aacc2; }
+.nav-item.lvl3.active { color: var(--accent); }
+.nav-item.lvl4 { padding-left: 52px; font-size: 11.5px; color: #4a6080; }
+.nav-item.lvl4:hover { color: #7a95b8; }
+.nav-item.lvl4.active { color: var(--accent); }
+.nav-item .nav-dot { width: 4px; height: 4px; border-radius: 50%; background: currentColor; flex-shrink: 0; opacity: .6; }
+.nav-footer { padding: 14px 16px; border-top: 1px solid rgba(255,255,255,.05); margin-top: 8px; }
+.nav-footer a { color: var(--accent); font-size: 11.5px; text-decoration: none; }
+.nav-footer a:hover { text-decoration: underline; }
+
+/* ── Content 正文区 ── */
+.content { flex: 1; overflow-y: auto; overflow-x: hidden; background: #f8f9fc; }
+.content::-webkit-scrollbar { width: 6px; }
+.content::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 3px; }
+.content-inner { max-width: var(--content-max); margin: 0 auto; padding: 52px 52px 120px; }
+
+/* ── Chapter / Headings 章节与标题 ── */
+.prd-chapter { margin-top: 72px; padding-top: 36px; border-top: 2px solid var(--border); }
+.prd-chapter:first-child { margin-top: 0; border-top: none; padding-top: 0; }
+.prd-h1 { display: flex; align-items: baseline; gap: 14px; font-size: 24px; font-weight: 700; color: var(--text-main); margin-bottom: 10px; }
+.prd-h1 .ch-num { font-size: 12px; font-weight: 700; color: #fff; background: var(--accent); padding: 2px 9px; border-radius: 4px; flex-shrink: 0; }
+.prd-desc { color: var(--text-muted); font-size: 13.5px; margin-bottom: 36px; line-height: 1.8; }
+.prd-h2 { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 700; color: var(--text-main); margin: 44px 0 18px; padding-bottom: 10px; border-bottom: 1.5px solid var(--border); }
+.prd-h2 .sec-num { color: var(--accent); font-size: 14px; font-weight: 600; }
+.prd-h3 { display: flex; align-items: center; gap: 8px; font-size: 14.5px; font-weight: 600; color: #2d3748; margin: 28px 0 12px; }
+.prd-h3::before { content: ''; display: inline-block; width: 3px; height: 14px; background: var(--accent); border-radius: 2px; flex-shrink: 0; }
+p { font-size: 13.5px; line-height: 1.85; color: #4a5568; margin-bottom: 12px; }
+
+/* ── Table 通用数据表 ── */
+.prd-table { width: 100%; border-collapse: collapse; margin: 14px 0 24px; font-size: 13px; }
+.prd-table th { background: #1a1a2e; color: #c5d0e4; font-weight: 600; padding: 9px 13px; text-align: left; border: 1px solid #2d3a54; }
+.prd-table td { padding: 9px 13px; border: 1px solid var(--border); vertical-align: top; line-height: 1.75; color: #4a5568; }
+.prd-table tr:nth-child(even) td { background: #fafbfd; }
+
+/* ── Use-case table 需求用例表（核心结构化表格） ── */
+.uc-table { width: 100%; border-collapse: collapse; margin: 20px 0 28px; font-size: 13px; }
+.uc-table td { border: 1px solid var(--border); padding: 10px 14px; vertical-align: top; line-height: 1.8; }
+.uc-field { background: #f4f6f9; font-weight: 600; color: #2d3748; width: 110px; white-space: nowrap; }  /* 左侧字段名灰底 */
+.uc-value { color: #4a5568; }
+.uc-value ol, .uc-value ul { padding-left: 18px; margin: 4px 0; }
+.uc-value li { margin-bottom: 5px; }
+.uc-value .sub-item { display: list-item; list-style-type: disc; margin-left: 22px; color: #4a5568; font-size: 13px; line-height: 1.8; margin-bottom: 2px; }
+.uc-value .rule-block { background: #f7f8fc; border-left: 3px solid #e2e8f0; padding: 6px 10px; margin: 6px 0; border-radius: 0 4px 4px 0; }
+.uc-value .rule-block.warn { border-left-color: #d69e2e; }
+.uc-value .rule-block.danger { border-left-color: #fc8181; }
+
+/* 表格内嵌字段表 */
+.inner-table { width: 100%; border-collapse: collapse; margin: 6px 0 10px; font-size: 12.5px; }
+.inner-table th { background: #eef1f6; color: #2d3748; font-weight: 600; padding: 6px 10px; border: 1px solid #d0d9e8; text-align: left; }
+.inner-table td { padding: 6px 10px; border: 1px solid #d0d9e8; color: #4a5568; vertical-align: top; line-height: 1.7; }
+
+/* ── Badges 优先级标记 ── */
+.badge { display: inline-block; padding: 1px 7px; border-radius: 4px; font-size: 11.5px; font-weight: 700; }
+.p0 { background: #fff5f5; color: #c53030; border: 1px solid #feb2b2; }
+.p1 { background: #fffaf0; color: #b7791f; border: 1px solid #fcd34d; }
+.p2 { background: #f0fff4; color: #276749; border: 1px solid #9ae6b4; }
+
+/* ── Notice 提示框 ── */
+.notice { padding: 12px 16px; border-radius: 6px; margin: 16px 0; font-size: 13px; line-height: 1.8; border-left: 4px solid; }
+.info { background: #ebf8ff; border-color: #3182ce; color: #2c5282; }
+.warn { background: #fffaf0; border-color: #d69e2e; color: #744210; }
+.danger { background: #fff5f5; border-color: #e53e3e; color: #742a2a; }
+
+/* ── Phase tag 阶段胶囊 ── */
+.phase-tag { display: inline-flex; align-items: center; background: #1a1a2e; color: var(--accent); padding: 2px 10px; border-radius: 20px; font-size: 11.5px; font-weight: 700; }
+
+/* ── Tag 等宽代码标签（字段名 / 权限码 / 状态值） ── */
+.tag { font-family: 'JetBrains Mono', 'Fira Code', monospace; background: #edf2f7; padding: 1px 6px; border-radius: 3px; font-size: 12px; color: #2d3748; }
+
+/* ── Proto link 原型链接 ── */
+a.proto-link { color: #3182ce; text-decoration: none; font-size: 13px; display: inline-flex; align-items: center; gap: 4px; }
+a.proto-link::before { content: '🔗'; font-size: 11px; }
+a.proto-link:hover { text-decoration: underline; }
+
+/* ── Diagram 插图容器 ── */
+.diagram-wrap { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 28px 20px 20px; margin: 20px 0 32px; overflow-x: auto; box-shadow: 0 1px 4px rgba(0,0,0,.04); }
+.diagram-cap { font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 14px; }
+
+/* 正交暗色流程图（GitHub 暗色调，圆角矩形、仅横纵正交连线） */
+.diagram-wrap.diagram-ortho-dark { background: #0d1117; border: 1px solid #30363d; border-radius: 10px; box-shadow: none; padding: 20px 16px 18px; }
+.diagram-wrap.diagram-ortho-dark .ortho-code-line { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; color: #8b949e; margin: 0 0 14px; letter-spacing: 0.02em; }
+.diagram-wrap.diagram-ortho-dark .prd-ortho-svg { display: block; width: 100%; height: auto; max-width: 940px; margin: 0 auto; }
+.diagram-wrap.diagram-ortho-dark .diagram-cap { color: #8b949e; }
+
+/* ── Lists 列表 ── */
+.prd-ul, .prd-ol { padding-left: 22px; margin: 8px 0 16px; }
+.prd-ul li, .prd-ol li { font-size: 13.5px; line-height: 1.85; color: #4a5568; margin-bottom: 5px; }
+
+/* ── Stub 占位块 ── */
+.stub { background: #fff; border: 1.5px dashed #e2e8f0; border-radius: 8px; padding: 30px 20px; margin: 18px 0 28px; text-align: center; color: var(--text-muted); }
+.stub .stub-emoji { font-size: 22px; margin-bottom: 8px; }
+.stub .stub-txt { font-size: 13px; }
+
+/* ── Responsive 响应式 ── */
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .content-inner { padding: 24px 20px 80px; }
+}
+
+
+.flow-img img { display:block; width:100%; height:auto; border-radius:8px; background:#fff; }
+.uc-table .uc-value p:first-child { margin-top:0; }
+.uc-table .uc-value p:last-child { margin-bottom:0; }
+.uc-table .uc-value ul { margin-top:0; margin-bottom:0; }
+.prd-table td:first-child { white-space:nowrap; }
+
+/* ????????????????????????????? */
+.feature-table { table-layout: fixed; }
+.feature-table .feature-code-col { width: 230px; }
+.feature-table .feature-name-col { width: auto; }
+.feature-table th:first-child, .feature-table td:first-child { width: 230px; white-space: nowrap; }
+.feature-table th:nth-child(2), .feature-table td:nth-child(2) { width: auto; }
+
+@media print {
+  .topbar, .sidebar { display:none; }
+  .layout { padding-top:0; display:block; height:auto; }
+  .content { overflow:visible; }
+  .content-inner { max-width:none; padding:24px; }
+  .uc-table, .prd-table, .diagram-wrap { break-inside:avoid; }
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <span class="topbar-brand">OS-SCRM</span>
+  <span class="topbar-sep">·</span>
+  <span class="topbar-title">PRD · WhatsApp IM V1 产品需求文档</span>
+  <div class="topbar-badges">
+    <span class="topbar-badge warn">最终版</span>
+    <span class="topbar-badge">V1.2 · 2026-06</span>
+    <span class="topbar-badge">Phase 1</span>
+  </div>
+</div>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="nav-hd">文档目录</div>
+    <nav id="nav"><a class="nav-item lvl1" href="#readme">阅读说明</a><div class="nav-divider"></div><a class="nav-item lvl1" href="#ch1">1. 需求背景</a><a class="nav-item lvl2" href="#ch1-user">1.2 目标用户</a><a class="nav-item lvl2" href="#ch1-dep">1.3 上下游依赖</a><a class="nav-item lvl1" href="#ch2">2. 需求目标</a><a class="nav-item lvl1" href="#ch3">3. 核心流程图</a><a class="nav-item lvl2" href="#flow-1">3.1 IM 主流程</a><a class="nav-item lvl2" href="#flow-2">3.2 账号掉线恢复流程</a><a class="nav-item lvl2" href="#flow-3">3.3 消息状态与异常流程</a><a class="nav-item lvl2" href="#flow-4">3.4 群聊管理流程</a><a class="nav-item lvl1" href="#ch4">4. 功能清单</a><a class="nav-item lvl2" href="#ch4-client">4.1 SCRM 客户端</a><a class="nav-item lvl2" href="#ch4-backend">4.2 SCRM 后端服务</a><div class="nav-divider"></div><a class="nav-item lvl1" href="#ch5">5. 需求功能详述</a><a class="nav-item lvl2" href="#client">SCRM 客户端</a><a class="nav-item lvl3" href="#client-1"><span class="nav-dot"></span>账号</a><a class="nav-item lvl4" href="#req-5-1"><span class="nav-dot"></span>5.1 多账号登录与切换</a><a class="nav-item lvl4" href="#req-5-2"><span class="nav-dot"></span>5.2 跨账号消息提醒与账号退出</a><a class="nav-item lvl4" href="#req-5-3"><span class="nav-dot"></span>5.3 掉线恢复</a><a class="nav-item lvl3" href="#client-2"><span class="nav-dot"></span>联系人</a><a class="nav-item lvl4" href="#req-5-4"><span class="nav-dot"></span>5.4 发起新会话</a><a class="nav-item lvl4" href="#req-5-5"><span class="nav-dot"></span>5.5 联系人详情与备注</a><a class="nav-item lvl3" href="#client-3"><span class="nav-dot"></span>会话</a><a class="nav-item lvl4" href="#req-5-6"><span class="nav-dot"></span>5.6 会话列表与搜索筛选</a><a class="nav-item lvl4" href="#req-5-7"><span class="nav-dot"></span>5.7 自定义会话分类</a><a class="nav-item lvl4" href="#req-5-8"><span class="nav-dot"></span>5.8 会话状态操作</a><a class="nav-item lvl3" href="#client-4"><span class="nav-dot"></span>消息</a><a class="nav-item lvl4" href="#req-5-9"><span class="nav-dot"></span>5.9 多类型消息收发</a><a class="nav-item lvl4" href="#req-5-10"><span class="nav-dot"></span>5.10 消息状态与失败重发</a><a class="nav-item lvl4" href="#req-5-11"><span class="nav-dot"></span>5.11 消息编辑、置顶与撤回</a><a class="nav-item lvl4" href="#req-5-12"><span class="nav-dot"></span>5.12 引用、转发、添加表情与@</a><a class="nav-item lvl4" href="#req-5-13"><span class="nav-dot"></span>5.13 消息搜索、选择与星标</a><a class="nav-item lvl4" href="#req-5-14"><span class="nav-dot"></span>5.14 媒体预览与异常提示</a><a class="nav-item lvl3" href="#client-5"><span class="nav-dot"></span>群聊</a><a class="nav-item lvl4" href="#req-5-15"><span class="nav-dot"></span>5.15 群列表与群详情</a><a class="nav-item lvl4" href="#req-5-16"><span class="nav-dot"></span>5.16 群资料与成员管理</a><a class="nav-item lvl4" href="#req-5-17"><span class="nav-dot"></span>5.17 管理员、邀请与入群审批</a><a class="nav-item lvl3" href="#client-6"><span class="nav-dot"></span>历史与同步</a><a class="nav-item lvl4" href="#req-5-18"><span class="nav-dot"></span>5.18 历史消息与实时同步</a><a class="nav-item lvl2" href="#backend">SCRM 后端服务</a><a class="nav-item lvl3" href="#req-5-19"><span class="nav-dot"></span>渠道接入服务</a><a class="nav-item lvl4" href="#req-5-19"><span class="nav-dot"></span>5.19 WhatsApp 账号连接与状态同步</a><a class="nav-item lvl3" href="#req-5-20"><span class="nav-dot"></span>客户与线索服务</a><a class="nav-item lvl4" href="#req-5-20"><span class="nav-dot"></span>5.20 联系人同步与号码验证</a><a class="nav-item lvl3" href="#req-5-21"><span class="nav-dot"></span>会话服务</a><a class="nav-item lvl4" href="#req-5-21"><span class="nav-dot"></span>5.21 会话列表与状态同步</a><a class="nav-item lvl4" href="#req-5-22"><span class="nav-dot"></span>5.22 消息发送与回执</a><a class="nav-item lvl4" href="#req-5-23"><span class="nav-dot"></span>5.23 消息操作能力</a><a class="nav-item lvl4" href="#req-5-24"><span class="nav-dot"></span>5.24 群组能力与群事件</a><a class="nav-item lvl4" href="#req-5-25"><span class="nav-dot"></span>5.25 历史消息与异常兜底</a><div class="nav-divider"></div><a class="nav-item lvl1" href="#ch6">6. 系统改造与依赖</a><a class="nav-item lvl1" href="#version">版本记录</a></nav>
+    <div class="nav-footer">
+      <div style="font-size:11px;color:#3d4f70;margin-bottom:6px;">📎 关联文件</div>
+      <a href="./OS-SCRM-WhatsApp-IM-V1-PRD.md" target="_blank">Markdown PRD ↗</a><br>
+      <a href="./flowcharts/flowchart-os-scrm-im-v1-main.png" target="_blank">流程图主图 ↗</a>
+    </div>
+  </aside>
+  <main class="content" id="content">
+    <div class="content-inner"><section class="prd-chapter" id="readme"><div class="prd-h1"><span class="ch-num">说明</span>阅读说明</div><p>1. 该文档需与同期交付的原型demo结合阅读2. 本PRD不描述布局、控件位置、配色与动效,视觉与交互以UI输出&gt;Demo效果为准3. PRD包含Demo无法表述的操作限制和后端逻辑,需对照查看</p></section><section class="prd-chapter" id="ch1"><div class="prd-h1"><span class="ch-num">第一章</span>需求背景</div><p>GB营销平台OS面向海外家居业务,WhatsApp是销售PM 和销售助理与海外客户沟通、项目协作的核心通道。现有SCRM 需要从单一账号、能力分散的沟通形态升级为统一Web IM 工作台,使员工在一个页面中使用多个WhatsApp 账号,并保留WhatsApp高频原生能力。</p><p>群聊在业务中对应客户项目协作群、项目交付群与代理商群,不是单聊的附属场景。消息已读时间、会话状态、群事件等数据还会作为后续AI分析和业务诊断的输入,因此必须稳定、可追溯。</p><div class="prd-h2" id="ch1-user"><span class="sec-num">1.2</span>目标用户</div><table class="prd-table"><thead><tr><th>角色</th><th>使用场景</th><th>本期能力</th></tr></thead><tbody><tr><td>销售 PM</td><td>售中沟通、报价跟进、项目群协作</td><td>使用完整 IM 基础能力</td></tr><tr><td>销售助理</td><td>售前沟通、客户信息确认、协作群沟通</td><td>使用完整 IM 基础能力</td></tr><tr><td>外部联系人/客户</td><td>通过 WhatsApp 单聊或群聊参与沟通</td><td>接收和发送 WhatsApp 消息</td></tr><tr><td>设计师、报价师等协作成员</td><td>在项目群中参与业务协作</td><td>作为群成员参与沟通</td></tr></tbody></table><div class="prd-h2" id="ch1-dep"><span class="sec-num">1.3</span>上下游依赖</div><table class="prd-table"><thead><tr><th>依赖</th><th>关系</th></tr></thead><tbody><tr><td>WhatsApp 第三方能力提供方</td><td>提供账号、联系人、会话、消息和群组底层能力</td></tr><tr><td>SCRM 云账号管理</td><td>提供云账号统一管理、状态巡检与提醒；本 PRD 不重复描述云账号管理能力</td></tr><tr><td>营销 OS 底层架构</td><td>提供登录、权限、菜单、通用异常提示等平台基础能力</td></tr><tr><td>后续 AI 与数据模块</td><td>消费会话、消息状态、精确已读时间和群事件数据</td></tr></tbody></table></section><section class="prd-chapter" id="ch2"><div class="prd-h1"><span class="ch-num">第二章</span>需求目标</div><p>1. 建设支持员工同时使用多个WhatsApp 账号的SCRM Web IM 工作台。</p><p>2.在SCRM 内完成新会话发起、联系人信息查看、会话查看、消息收发、消息操作和群聊管理等高频基本功能。</p><p>3. 保证账号、联系人、会话、消息和群组状态可多端实时同步、历史信息可追溯。</p><p>4. 为账号掉线、消息失败、媒体异常和群操作失败提供明确恢复路径。</p></section><section class="prd-chapter" id="ch3"><div class="prd-h1"><span class="ch-num">第三章</span>需求核心业务流程图</div><div class="prd-h2" id="flow-1"><span class="sec-num">3.1</span>IM 主流程</div><div class="diagram-wrap flow-img"><img src="flowcharts/flowchart-os-scrm-im-v1-main.png" alt="IM 主流程"><div class="diagram-cap">图 3.1：IM 主流程</div></div><div class="prd-h2" id="flow-2"><span class="sec-num">3.2</span>账号掉线恢复流程</div><div class="diagram-wrap flow-img"><img src="flowcharts/flowchart-os-scrm-im-v1-account-offline.png" alt="账号掉线恢复流程"><div class="diagram-cap">图 3.2：账号掉线恢复流程</div></div><div class="prd-h2" id="flow-3"><span class="sec-num">3.3</span>消息状态与异常流程</div><div class="diagram-wrap flow-img"><img src="flowcharts/flowchart-os-scrm-im-v1-message-state.png" alt="消息状态与异常流程"><div class="diagram-cap">图 3.3：消息状态与异常流程</div></div><div class="prd-h2" id="flow-4"><span class="sec-num">3.4</span>群聊管理流程</div><div class="diagram-wrap flow-img"><img src="flowcharts/flowchart-os-scrm-im-v1-group-management.png" alt="群聊管理流程"><div class="diagram-cap">图 3.4：群聊管理流程</div></div></section><section class="prd-chapter" id="ch4"><div class="prd-h1"><span class="ch-num">第四章</span>需求功能清单</div><div class="prd-h2" id="ch4-client"><span class="sec-num">4.1</span>SCRM 客户端</div><div class="prd-h3" id="ch4-client-1">4.1.1 &nbsp;会话工作台 · 账号</div><table class="prd-table feature-table"><colgroup><col class="feature-code-col"><col class="feature-name-col"></colgroup><thead><tr><th>功能编号</th><th>功能名称</th></tr></thead><tbody><tr><td>5.1</td><td>多账号登录与切换</td></tr><tr><td>5.2</td><td>跨账号消息提醒与账号退出</td></tr><tr><td>5.3</td><td>掉线恢复</td></tr></tbody></table><div class="prd-h3" id="ch4-client-2">4.1.2 &nbsp;会话工作台 · 联系人</div><table class="prd-table feature-table"><colgroup><col class="feature-code-col"><col class="feature-name-col"></colgroup><thead><tr><th>功能编号</th><th>功能名称</th></tr></thead><tbody><tr><td>5.4</td><td>发起新会话</td></tr><tr><td>5.5</td><td>联系人详情与备注</td></tr></tbody></table><div class="prd-h3" id="ch4-client-3">4.1.3 &nbsp;会话工作台 · 会话</div><table class="prd-table feature-table"><colgroup><col class="feature-code-col"><col class="feature-name-col"></colgroup><thead><tr><th>功能编号</th><th>功能名称</th></tr></thead><tbody><tr><td>5.6</td><td>会话列表与搜索筛选</td></tr><tr><td>5.7</td><td>自定义会话分类</td></tr><tr><td>5.8</td><td>会话状态操作</td></tr></tbody></table><div class="prd-h3" id="ch4-client-4">4.1.4 &nbsp;会话工作台 · 消息</div><table class="prd-table feature-table"><colgroup><col class="feature-code-col"><col class="feature-name-col"></colgroup><thead><tr><th>功能编号</th><th>功能名称</th></tr></thead><tbody><tr><td>5.9</td><td>多类型消息收发</td></tr><tr><td>5.10</td><td>消息状态与失败重发</td></tr><tr><td>5.11</td><td>消息编辑、置顶与撤回</td></tr><tr><td>5.12</td><td>引用、转发、添加表情与@</td></tr><tr><td>5.13</td><td>消息搜索、选择与星标</td></tr><tr><td>5.14</td><td>媒体预览与异常提示</td></tr></tbody></table><div class="prd-h3" id="ch4-client-5">4.1.5 &nbsp;会话工作台 · 群聊</div><table class="prd-table feature-table"><colgroup><col class="feature-code-col"><col class="feature-name-col"></colgroup><thead><tr><th>功能编号</th><th>功能名称</th></tr></thead><tbody><tr><td>5.15</td><td>群列表与群详情</td></tr><tr><td>5.16</td><td>群资料与成员管理</td></tr><tr><td>5.17</td><td>管理员、邀请与入群审批</td></tr></tbody></table><div class="prd-h3" id="ch4-client-6">4.1.6 &nbsp;会话工作台 · 历史与同步</div><table class="prd-table feature-table"><colgroup><col class="feature-code-col"><col class="feature-name-col"></colgroup><thead><tr><th>功能编号</th><th>功能名称</th></tr></thead><tbody><tr><td>5.18</td><td>历史消息与实时同步</td></tr></tbody></table><div class="prd-h2" id="ch4-backend"><span class="sec-num">4.2</span>SCRM 后端服务</div><div class="prd-h3" id="ch4-backend-1">4.2.1 &nbsp;渠道接入服务</div><table class="prd-table feature-table"><colgroup><col class="feature-code-col"><col class="feature-name-col"></colgroup><thead><tr><th>功能编号</th><th>功能名称</th></tr></thead><tbody><tr><td>5.19</td><td>WhatsApp 账号连接与状态同步</td></tr></tbody></table><div class="prd-h3" id="ch4-backend-2">4.2.2 &nbsp;客户与线索服务</div><table class="prd-table feature-table"><colgroup><col class="feature-code-col"><col class="feature-name-col"></colgroup><thead><tr><th>功能编号</th><th>功能名称</th></tr></thead><tbody><tr><td>5.20</td><td>联系人同步与号码验证</td></tr></tbody></table><div class="prd-h3" id="ch4-backend-3">4.2.3 &nbsp;会话服务</div><table class="prd-table feature-table"><colgroup><col class="feature-code-col"><col class="feature-name-col"></colgroup><thead><tr><th>功能编号</th><th>功能名称</th></tr></thead><tbody><tr><td>5.21</td><td>会话列表与状态同步</td></tr><tr><td>5.22</td><td>消息发送与回执</td></tr><tr><td>5.23</td><td>消息操作能力</td></tr><tr><td>5.24</td><td>群组能力与群事件</td></tr><tr><td>5.25</td><td>历史消息与异常兜底</td></tr></tbody></table></section><section class="prd-chapter" id="ch5"><div class="prd-h1"><span class="ch-num">第五章</span>需求功能详述</div><div id="client"><div class="prd-h2"><span class="sec-num">5.1-5.18</span>SCRM 客户端</div><div id="client-1"><div class="prd-h3">会话工作台 · 账号</div><div id="req-5-1"><div class="prd-h3">5.1 &nbsp;SCRM 客户端——会话工作台-账号——多账号登录与切换</div><table class="uc-table"><tbody><tr><td class="uc-field">场景说明</td><td class="uc-value" colspan="3"><p>销售PM 或销售助理需要在一个工作台登录并切换多个WhatsApp 账号,集中处理各账号会话。</p></td></tr><tr><td class="uc-field">前置条件</td><td class="uc-value" colspan="3"><p>用户已登录SCRM ;账号绑定数上限未达到(10个)</p></td></tr><tr><td class="uc-field">核心逻辑</td><td class="uc-value" colspan="3"><div class="rule-block"><ul><li>新增账号时调起弹窗WhatsApp二维码登录;二维码需包含过期时间,失效后可刷新。</li><li>登录成功后新增账号进入登录状态,并默认加载此账号,开始自动同步近期多端数据</li><li>切换账号后只加载当前账号下的联系人、会话、消息和群组,不同账号的数据不得混排。</li></ul></div></td></tr><tr><td class="uc-field">功能交互</td><td class="uc-value" colspan="3"><ul><li>操作路径:账号栏顶部 + →打开云端登录二维码→WhatsApp扫码完成绑定;点击账号头像切换当前工作区。</li><li>提供新增账号、刷新二维码和切换账号操作</li></ul></td></tr><tr><td class="uc-field">边界与异常</td><td class="uc-value" colspan="3"><p>二维码过期自动刷新;绑定失败展示原因;无需至少保留一个可用账号登录态</p></td></tr><tr><td class="uc-field">埋点</td><td class="uc-value" colspan="3"><p><span class="tag">SCRM_ACCOUNT_BIND_RESULT</span></p></td></tr><tr><td class="uc-field">验收标准</td><td class="uc-value" colspan="3"><p>绑定成功后账号可切换;切换后工作区数据归属正确;</p></td></tr></tbody></table></div><div id="req-5-2"><div class="prd-h3">5.2 &nbsp;SCRM 客户端——会话工作台-账号——跨账号消息提醒与账号退出</div><table class="uc-table"><tbody><tr><td class="uc-field">场景说明</td><td class="uc-value" colspan="3"><p>销售人员使用当前账号时,需要感知其他账号的新消息,并退出不再使用的账号。</p></td></tr><tr><td class="uc-field">核心逻辑</td><td class="uc-value" colspan="3"><div class="rule-block"><ul><li>非当前账号收到新消息时,不自动切换工作区,只累计对应账号未读数并提醒。</li><li>切换至该账号并打开会话后,按会话已读规则清除未读。</li><li>退出账号需二次确认;退出后从个人工作区移除,但不替代云账号管理中的解绑/删除能力。</li></ul></div></td></tr><tr><td class="uc-field">功能交互</td><td class="uc-value" colspan="3"><ul><li>操作路径:非当前账号收到消息→账号头像展示提醒+1(上限99);鼠标移入账号头像→展开账号信息→点击退出账号→二次确认。</li><li>当前账号退出成功后自动切换至排第一个的可用账号。</li></ul></td></tr><tr><td class="uc-field">边界与异常</td><td class="uc-value" colspan="3"><p>退出失败保持原状态</p></td></tr><tr><td class="uc-field">埋点</td><td class="uc-value" colspan="3"><p><span class="tag">SCRM_CROSS_ACCOUNT_NOTICE</span> 、<span class="tag">SCRM_ACCOUNT_LOGOUT_RESULT</span></p></td></tr><tr><td class="uc-field">验收标准</td><td class="uc-value" colspan="3"><p>非当前账号消息不打断当前操作;退出确认成功后账号不再出现在个人工作区。</p></td></tr></tbody></table></div><div id="req-5-3"><div class="prd-h3">5.3 &nbsp;SCRM 客户端——会话工作台-账号——掉线恢复</div><table class="uc-table"><tbody><tr><td class="uc-field">场景说明</td><td class="uc-value" colspan="3"><p>销售人员遇到账号掉线时,需要明确知道影响范围并快速恢复账号。</p></td></tr><tr><td class="uc-field">核心逻辑</td><td class="uc-value" colspan="3"><div class="rule-block"><ul><li>当前账号掉线后,工作区进入不可发送状态并提示重新扫码。</li><li>其他在线账号仍可切换和使用。</li><li>重新扫码成功后恢复当前账号能力并重新同步会话状态。</li><li>云账号掉线规则复用云账号管理PRD,此处仅为本地登录账号说明</li></ul></div></td></tr><tr><td class="uc-field">功能交互</td><td class="uc-value" colspan="3"><ul><li>操作路径:当前账号掉线→工作区展示掉线状态→点击重新扫码登录;用户也可直接点击其他在线账号继续工作。</li><li>掉线账号禁止发送消息和执行依赖在线状态的操作;重连后视为登录开始同步消息</li></ul></td></tr><tr><td class="uc-field">边界与异常</td><td class="uc-value" colspan="3"><p>重登失败保留掉线态并允许重试;掉线期间的消息由“历史消息与异常兜底”能力补拉。</p></td></tr><tr><td class="uc-field">埋点</td><td class="uc-value" colspan="3"><p><span class="tag">SCRM_ACCOUNT_OFFLINE</span> 、<span class="tag">SCRM_ACCOUNT_RECONNECT_RESULT</span></p></td></tr><tr><td class="uc-field">验收标准</td><td class="uc-value" colspan="3"><p>掉线账号不可操作任何内容;在线账号不受影响;恢复登录后可继续操作。</p></td></tr></tbody></table></div></div><div id="client-2"><div class="prd-h3">会话工作台 · 联系人</div><div id="req-5-4"><div class="prd-h3">5.4 &nbsp;SCRM 客户端——会话工作台-联系人——发起新会话</div><table class="uc-table"><tbody><tr><td class="uc-field">场景说明</td><td class="uc-value" colspan="3"><p>销售人员需要通过添加联系人或新建群组发起新会话。</p></td></tr><tr><td class="uc-field">核心逻辑</td><td class="uc-value" colspan="3"><div class="rule-block"><ul><li>发起新会话提供“新建群组”和“添加联系人”两种能力</li><li>添加联系人是使用当前工作台WhatsApp 账号添加,不允许在弹窗中切换账号。</li><li>用户输入用户号码或WhatsApp 账号,系统接口验证账号有效性;验证通过后添加联系人并创建或打开对应会话。</li><li>同一WhatsApp 账号下已存在对应联系人会话时,直接打开已有会话,不重复创建。</li><li>新建群组时群名称必填,不做重复性校验,至少选择1名成员,当前WhatsApp 账号自动加入群组。</li></ul></div></td></tr><tr><td class="uc-field">功能交互</td><td class="uc-value" colspan="3"><ul><li>操作路径:会话列表顶部“新聊天”入口→选择“新建群组”或“添加联系人”。</li><li>新建群组:通过“新聊天→新建群组”或单聊中的“发起群聊”进入创建流程,填写群名称并选择成员→创建后进入新群会话;群名称最多50字符,群成员最多500人。</li><li>添加联系人:查看只读的当前WhatsApp 账号→输入用户号码或WhatsApp 账号→点击匹配结果添加并进入会话。</li><li>手机号必须符合E.164格式且最多15位;号码无效、已超限或未匹配到账号时禁止添加。</li></ul></td></tr><tr><td class="uc-field">边界与异常</td><td class="uc-value" colspan="3"><p>号码无效时禁止创建;验证超时提示重试;号码验证能力依赖第三方接口;群创建失败不生成群。</p></td></tr><tr><td class="uc-field">埋点</td><td class="uc-value" colspan="3"><p><span class="tag">SCRM_CONTACT_VERIFY_RESULT</span> 、<span class="tag">SCRM_CONVERSATION_CREATE</span> 、<span class="tag">SCRM_GROUP_CREATE_RESULT</span></p></td></tr><tr><td class="uc-field">验收标准</td><td class="uc-value" colspan="3"><p>两种发起路径均可用;有效联系人可进入会话;无效号码被明确拦截;</p></td></tr></tbody></table></div><div id="req-5-5"><div class="prd-h3">5.5 &nbsp;SCRM 客户端——会话工作台-联系人——联系人详情与备注</div><table class="uc-table"><tbody><tr><td class="uc-field">场景说明</td><td class="uc-value" colspan="3"><p>销售人员在沟通前需要查看联系人最新资料、活跃状态和备注,确认沟通对象。</p></td></tr><tr><td class="uc-field">核心逻辑</td><td class="uc-value" colspan="3"><div class="rule-block"><ul><li>打开单聊时获取联系人最新资料;联系人字段变化通过实时事件更新。</li><li>展示当前是否在线和上次活跃时间,精度至少到分钟。</li><li>单聊中展示联系人地区和当地时间,初次通过手机号或USBID获得</li><li>支持读写联系人私人备注,并与WhatsApp 端双向同步。</li></ul></div></td></tr><tr><td class="uc-field">功能交互</td><td class="uc-value" colspan="3"><ul><li>操作路径:打开单聊→点击聊天顶部头像或三点菜单“联系人信息”→查看联系人资料。</li><li>联系人备注编辑、上次活跃时间展示为 [x 分钟前, x 小时前, x 天前,超过 3 个月则很久以前 ]</li><li>备注最多50字符,保存成功后与WhatsApp双向同步</li></ul></td></tr><tr><td class="uc-field">边界与异常</td><td class="uc-value" colspan="3"><p>活跃状态不可用时展示未知;备注同步失败保留旧值并提示。</p></td></tr><tr><td class="uc-field">埋点</td><td class="uc-value" colspan="3"><p><span class="tag">SCRM_CONTACT_DETAIL_VIEW</span> 、<span class="tag">SCRM_CONTACT_REMARK_RESULT</span></p></td></tr><tr><td class="uc-field">验收标准</td><td class="uc-value" colspan="3"><p>资料变化可同步;备注写入成功后两端一致;同步失败不覆盖旧值。</p></td></tr></tbody></table></div></div><div id="client-3"><div class="prd-h3">会话工作台 · 会话</div><div id="req-5-6"><div class="prd-h3">5.6 &nbsp;SCRM 客户端——会话工作台-会话——会话列表与搜索筛选</div><table class="uc-table"><tbody><tr><td class="uc-field">场景说明</td><td class="uc-value" colspan="3"><p>销售人员需要快速找到当前账号下的目标单聊或群聊。</p></td></tr><tr><td class="uc-field">核心逻辑</td><td class="uc-value" colspan="3"><div class="rule-block"><ul><li>当前账号下单聊和群聊混排;置顶会话优先,其余按最后活跃时间倒序。</li><li>支持分页加载,搜索匹配联系人名、备注名、号码、群名和消息。</li><li>支持全部、未读、特别关注、单聊、群聊和自定义列表筛选。</li><li>归档会话从主列表移出,可在归档范围中找回。</li><li>需返回并展示每个会话的未读消息数和总未读会话数。</li></ul></div></td></tr><tr><td class="uc-field">功能交互</td><td class="uc-value" colspan="3"><ul><li>操作路径:在会话列表搜索框输入关键词,或点击标签组筛选;向下滚动加载更多;点击会话进入聊天。</li><li>搜索输入最多50字符</li></ul></td></tr><tr><td class="uc-field">边界与异常</td><td class="uc-value" colspan="3"><p>搜索无结果展示空态;加载失败保留已加载数据并允许重试。</p></td></tr><tr><td class="uc-field">埋点</td><td class="uc-value" colspan="3"><p><span class="tag">SCRM_CONVERSATION_SEARCH</span> 、<span class="tag">SCRM_CONVERSATION_FILTER</span> 、<span class="tag">SCRM_CONVERSATION_PAGE_LOAD</span></p></td></tr><tr><td class="uc-field">验收标准</td><td class="uc-value" colspan="3"><p>排序、搜索和筛选结果正确;切换账号后不展示其他账号会话。</p></td></tr></tbody></table></div><div id="req-5-7"><div class="prd-h3">5.7 &nbsp;SCRM 客户端——会话工作台-会话——自定义会话分类</div><table class="uc-table"><tbody><tr><td class="uc-field">场景说明</td><td class="uc-value" colspan="3"><p>销售人员需要创建个人自定义会话分类,按自己的工作方式整理会话。</p></td></tr><tr><td class="uc-field">核心逻辑</td><td class="uc-value" colspan="3"><div class="rule-block"><ul><li>自定义分类按WhatsApp 账号独立维护,属于SCRM 自有能力。</li><li>创建分类时名称必填,可选择当前账号下的会话加入。</li><li>会话可加入多个自定义分类;调整列表不改变WhatsApp原生会话状态。</li><li>自定义列表数据需要多端同步</li></ul></div></td></tr><tr><td class="uc-field">功能交互</td><td class="uc-value" colspan="3"><ul><li>操作路径:标签组末尾 + →输入列表名称→添加当前账号下的用户或群组→创建;会话三点菜单“更改分组”可调整所属列表。</li><li>列表名称最多10字符且同账号不可重名;每账号最多10个自定义列表;每个列表最多包含200个会话。</li></ul></td></tr><tr><td class="uc-field">边界与异常</td><td class="uc-value" colspan="3"><p>空名称、重名或达到数量上限时禁止创建;删除和重命名和排序能力本期不纳入。</p></td></tr><tr><td class="uc-field">埋点</td><td class="uc-value" colspan="3"><p><span class="tag">SCRM_CUSTOM_LIST_CREATE</span> 、<span class="tag">SCRM_CUSTOM_LIST_ASSIGN</span></p></td></tr><tr><td class="uc-field">验收标准</td><td class="uc-value" colspan="3"><p>列表创建成功后可筛选;会话所属列表更新正确;跨账号不共享。</p></td></tr></tbody></table></div><div id="req-5-8"><div class="prd-h3">5.8 &nbsp;SCRM 客户端——会话工作台-会话——会话状态操作</div><table class="uc-table"><tbody><tr><td class="uc-field">场景说明</td><td class="uc-value" colspan="3"><p>销售人员需要管理会话状态,区分待处理会话和重点会话。</p></td></tr><tr><td class="uc-field">核心逻辑</td><td class="uc-value" colspan="3"><div class="rule-block"><ul><li>打开会话后可标记已读;已读会话可主动标未读。</li><li>支持置顶/取消置顶、静音/开启通知、归档/取消归档。</li><li>状态操作成功后同步更新列表;第三方状态事件也需回写本地。</li><li>静音不影响消息接收,只影响通知。</li></ul></div></td></tr><tr><td class="uc-field">功能交互</td><td class="uc-value" colspan="3"><ul><li>操作路径:会话列表卡片或聊天顶部三点菜单→标记已读/未读、置顶/取消置顶、静音/开启通知、归档。</li><li>打开未读会话自动标记已读;静音/开启通知、取消归档操作及归档列表入口为鼠标移入会话三点操作下拉框</li></ul></td></tr><tr><td class="uc-field">边界与异常</td><td class="uc-value" colspan="3"><p>操作失败回滚客户端状态并提示;重复事件需幂等。</p></td></tr><tr><td class="uc-field">埋点</td><td class="uc-value" colspan="3"><p><span class="tag">SCRM_CONVERSATION_STATE_CHANGE</span></p></td></tr><tr><td class="uc-field">验收标准</td><td class="uc-value" colspan="3"><p>状态操作与列表表现一致;其他设备状态变化可同步。</p></td></tr></tbody></table></div></div><div id="client-4"><div class="prd-h3">会话工作台 · 消息</div><div id="req-5-9"><div class="prd-h3">5.9 &nbsp;SCRM 客户端——会话工作台-消息——多类型消息收发</div><table class="uc-table"><tbody><tr><td class="uc-field">场景说明</td><td class="uc-value" colspan="3"><p>销售人员需要在SCRM 中收发业务沟通所需的WhatsApp消息类型。</p></td></tr><tr><td class="uc-field">核心逻辑</td><td class="uc-value" colspan="3"><div class="rule-block"><ul><li>支持文本、图片、视频、语音、音频文件、文档、位置、联系人卡片、表情包、模板消息、组合消息。</li><li>发送前校验账号在线、内容有效和类型限制;通过后创建发送中消息。</li><li>接收消息时按类型结构化展示;群消息必须标识发送者。</li><li>系统消息以独立类型进入时间线,覆盖群事件和渠道安全提示。</li><li>模板消息和组合消息具体规则依赖第三方能力。</li></ul></div></td></tr><tr><td class="uc-field">功能交互</td><td class="uc-value" colspan="3"><ul><li>操作路径:聊天输入条输入文本并发送;附件入口发送文档、相册、音频或联系人卡片;语音入口录制并发送;表情入口插入表情。</li><li>文本最多4096字符;单个文件最大100MB;单次发送附件最多10个;单条语音最⻓15分钟;账号离线时禁止发送。</li><li>多附件选择,以及视频、位置、表情包、模板消息和组合消息的发送操作为对话栏+号</li></ul></td></tr><tr><td class="uc-field">边界与异常</td><td class="uc-value" colspan="3"><p>接收不支持的类型以未知消息兜底,保留原始信息供排查;空文本禁止发送;组合消息任一部分失败则整组失败</p></td></tr><tr><td class="uc-field">埋点</td><td class="uc-value" colspan="3"><p><span class="tag">SCRM_MESSAGE_SEND_RESULT</span> ,参数包含消息类型、会话类型和失败原因</p></td></tr><tr><td class="uc-field">验收标准</td><td class="uc-value" colspan="3"><p>11类消息均可正确收发或明确提示能力限制;群消息发送者正确。</p></td></tr></tbody></table></div><div id="req-5-10"><div class="prd-h3">5.10 &nbsp;SCRM 客户端——会话工作台-消息——消息状态与失败重发</div><table class="uc-table"><tbody><tr><td class="uc-field">场景说明</td><td class="uc-value" colspan="3"><p>销售人员需要确认消息是否发送、送达和已读,并在发送失败时重发。</p></td></tr><tr><td class="uc-field">核心逻辑</td><td class="uc-value" colspan="3"><div class="rule-block"><ul><li>消息状态正向流转:发送中→已发送→已送达→已读</li><li>已读回执记录“读到哪条消息+精确读取时间”,精度至少到秒。</li><li>失败消息展示失败原因;点击重发复用原消息记录,不生成重复消息。</li><li>状态事件按消息唯一标识幂等处理。</li></ul></div></td></tr><tr><td class="uc-field">功能交互</td><td class="uc-value" colspan="3"><ul><li>操作路径:点击发出消息的状态图标查看送达/已读详情;发送失败时点击消息旁重发入口。</li><li>单聊展示对方送达或已读时间;群聊按成员展示已读、已送达和尚未已读人数;</li></ul></td></tr><tr><td class="uc-field">边界与异常</td><td class="uc-value" colspan="3"><p>延迟回执可后续更新;乱序回执不得使状态倒退。</p></td></tr><tr><td class="uc-field">埋点</td><td class="uc-value" colspan="3"><p><span class="tag">SCRM_MESSAGE_STATUS_CHANGE</span> 、<span class="tag">SCRM_MESSAGE_RETRY_RESULT</span></p></td></tr><tr><td class="uc-field">验收标准</td><td class="uc-value" colspan="3"><p>状态不倒退;精确已读时间可查询;重发成功后原消息转为成功状态。</p></td></tr></tbody></table></div><div id="req-5-11"><div class="prd-h3">5.11 &nbsp;SCRM 客户端——会话工作台-消息——消息编辑、置顶与撤回</div><table class="uc-table"><tbody><tr><td class="uc-field">场景说明</td><td class="uc-value" colspan="3"><p>销售人员需要对满足操作条件的已发消息进行修正、置顶或撤回。</p></td></tr><tr><td class="uc-field">核心逻辑</td><td class="uc-value" colspan="3"><div class="rule-block"><ul><li>编辑仅对本人发送且WhatsApp允许编辑的消息开放;成功后原消息更新并标记已编辑。</li><li>支持单聊和群聊消息置顶;权限限制以第三方能力为准。</li><li>双方撤回受2分钟时限限制;成功后原消息替换为撤回提示。</li><li>“仅我们删除”只删除SCRM 本地可⻅记录,不影响对方。</li></ul></div></td></tr><tr><td class="uc-field">功能交互</td><td class="uc-value" colspan="3"><ul><li>操作路径:鼠标移入目标消息→打开消息操作条或更多菜单→选择编辑、置顶、双方撤回或仅我们删除。</li><li>编辑仅对本人发送的文本消息开放,发送后15分钟内可编辑</li><li>双方撤回仅在发送后2分钟内可执行;消息置顶可在会话顶部查看,可取消置顶和定位置顶消息位置</li></ul></td></tr><tr><td class="uc-field">边界与异常</td><td class="uc-value" colspan="3"><p>超过撤回时限明确提示;操作失败保持原消息。</p></td></tr><tr><td class="uc-field">埋点</td><td class="uc-value" colspan="3"><p><span class="tag">SCRM_MESSAGE_ACTION_RESULT</span> ,参数为edit/pin/recall/local_delete</p></td></tr><tr><td class="uc-field">验收标准</td><td class="uc-value" colspan="3"><p>编辑和撤回更新原消息;超时撤回被拦截;失败不污染原状态。</p></td></tr></tbody></table></div><div id="req-5-12"><div class="prd-h3">5.12 &nbsp;SCRM 客户端——会话工作台-消息——引用、转发、添加表情与@</div><table class="uc-table"><tbody><tr><td class="uc-field">场景说明</td><td class="uc-value" colspan="3"><p>销售人员需要基于消息上下文精准回复、转发和回应消息。</p></td></tr><tr><td class="uc-field">核心逻辑</td><td class="uc-value" colspan="3"><div class="rule-block"><ul><li>引用回复保留原消息标识和摘要,发送后展示引用关系。</li><li>转发支持选择一个或多个目标会话,目标消息标记为已转发。</li><li>添加表情写入或覆盖当前用户对目标消息的回应。</li><li>群聊中支持@ 提及成员,被提及成员收到特殊通知。</li></ul></div></td></tr><tr><td class="uc-field">功能交互</td><td class="uc-value" colspan="3"><ul><li>操作路径:鼠标移入消息→点击引用、添加、群内@ 或更多菜单“转发”;转发弹窗中搜索并选择目标会话。</li><li>单次最多转发20条消息至5个目标会话;添加表情重复操作覆盖当前用户原回应;群内@ 将消息发送者插入输入框。</li></ul></td></tr><tr><td class="uc-field">边界与异常</td><td class="uc-value" colspan="3"><p>原消息被撤回时引用仍保留可识别摘要;部分目标转发失败需逐项反馈。</p></td></tr><tr><td class="uc-field">埋点</td><td class="uc-value" colspan="3"><p><span class="tag">SCRM_MESSAGE_CONTEXT_ACTION</span></p></td></tr><tr><td class="uc-field">验收标准</td><td class="uc-value" colspan="3"><p>引用关系可追溯;转发目标正确;</p></td></tr></tbody></table></div><div id="req-5-13"><div class="prd-h3">5.13 &nbsp;SCRM 客户端——会话工作台-消息——消息搜索、选择与星标</div><table class="uc-table"><tbody><tr><td class="uc-field">场景说明</td><td class="uc-value" colspan="3"><p>销售人员需要在当前会话中查找和整理重要消息。</p></td></tr><tr><td class="uc-field">核心逻辑</td><td class="uc-value" colspan="3"><div class="rule-block"><ul><li>搜索范围为当前会话历史消息;点击结果定位到目标消息。</li><li>选择消息模式支持批量选择消息设置星标和转发</li><li>星标属于结果多端同步。</li></ul></div></td></tr><tr><td class="uc-field">功能交互</td><td class="uc-value" colspan="3"><ul><li>操作路径:聊天顶部三点菜单→搜索聊天内容或选择消息;搜索结果可点击定位;多选后通过底部操作栏星标或转发。</li><li>搜索输入最多100字符;单次最多选择50条消息;已撤回,本地删除消息不参与搜索。</li></ul></td></tr><tr><td class="uc-field">边界与异常</td><td class="uc-value" colspan="3"><p>无结果展示空态;达到选择上限后禁止继续勾选。</p></td></tr><tr><td class="uc-field">埋点</td><td class="uc-value" colspan="3"><p><span class="tag">SCRM_MESSAGE_SEARCH</span> 、<span class="tag">SCRM_MESSAGE_BATCH_ACTION</span></p></td></tr><tr><td class="uc-field">验收标准</td><td class="uc-value" colspan="3"><p>搜索结果可定位;批量操作只影响已选消息。</p></td></tr></tbody></table></div><div id="req-5-14"><div class="prd-h3">5.14 &nbsp;SCRM 客户端——会话工作台-消息——媒体预览与异常提示</div><table class="uc-table"><tbody><tr><td class="uc-field">场景说明</td><td class="uc-value" colspan="3"><p>销售人员需要预览或下载媒体消息,并在资源失效时获知原因。</p></td></tr><tr><td class="uc-field">核心逻辑</td><td class="uc-value" colspan="3"><div class="rule-block"><ul><li>图片、视频、语音、音频、文档和位置按类型提供预览、播放或下载能力。</li><li>历史媒体不可用时展示失效或加载失败提示。</li><li>100MB以上大文件未推送时展示不可同步提示。</li></ul></div></td></tr><tr><td class="uc-field">功能交互</td><td class="uc-value" colspan="3"><ul><li>操作路径:点击图片、视频、语音、文档或位置消息→打开对应预览、播放或下载能力。</li><li>单个文件最大100MB;超过限制的入站文件仅展示不可同步提示,不提供补拉操作。</li></ul></td></tr><tr><td class="uc-field">边界与异常</td><td class="uc-value" colspan="3"><p>下载失败不影响消息正文;媒体资源或URL失效时仅提示失败,不自动刷新。</p></td></tr><tr><td class="uc-field">埋点</td><td class="uc-value" colspan="3"><p><span class="tag">SCRM_MEDIA_OPEN_RESULT</span> 、<span class="tag">SCRM_MEDIA_LOAD_FAIL</span></p></td></tr><tr><td class="uc-field">验收标准</td><td class="uc-value" colspan="3"><p>支持类型可打开;失败状态明确且不阻塞会话。</p></td></tr></tbody></table></div></div><div id="client-5"><div class="prd-h3">会话工作台 · 群聊</div><div id="req-5-15"><div class="prd-h3">5.15 &nbsp;SCRM 客户端——会话工作台-群聊——群列表与群详情</div><table class="uc-table"><tbody><tr><td class="uc-field">场景说明</td><td class="uc-value" colspan="3"><p>销售人员需要在当前账号会话中查找群聊并查看群详情。</p></td></tr><tr><td class="uc-field">核心逻辑</td><td class="uc-value" colspan="3"><div class="rule-block"><ul><li>群聊与单聊在会话列表混排;群列表可分页和搜索。</li><li>群详情包含群名、头像、描述、创建时间、成员、角色、成员在线状态、地区和当地时间;创建时间只读。</li></ul></div></td></tr><tr><td class="uc-field">功能交互</td><td class="uc-value" colspan="3"><ul><li>操作路径:会话列表点击“群组”标签或搜索群名→打开群会话→点击聊天顶部头像、成员数量或三点菜单“群聊信息”查看群详情。</li><li>群名搜索输入最多100字符;群详情中的创建时间只读。</li></ul></td></tr><tr><td class="uc-field">边界与异常</td><td class="uc-value" colspan="3"><p>群详情加载失败时保留会话消息并允许重试;手动创建群统一由“发起新会话”功能承载。</p></td></tr><tr><td class="uc-field">埋点</td><td class="uc-value" colspan="3"><p><span class="tag">SCRM_GROUP_DETAIL_VIEW</span></p></td></tr><tr><td class="uc-field">验收标准</td><td class="uc-value" colspan="3"><p>群聊可筛选和搜索;群详情字段完整;创建时间不可编辑。</p></td></tr></tbody></table></div><div id="req-5-16"><div class="prd-h3">5.16 &nbsp;SCRM 客户端——会话工作台-群聊——群资料与成员管理</div><table class="uc-table"><tbody><tr><td class="uc-field">场景说明</td><td class="uc-value" colspan="3"><p>具备权限的群成员需要维护群资料和群成员。</p></td></tr><tr><td class="uc-field">核心逻辑</td><td class="uc-value" colspan="3"><div class="rule-block"><ul><li>具备管理员权限的用户可修改群名、描述和头像;创建时间只读。</li><li>支持单个或批量添加、移除成员,并支持当前账号退出群(管理员退出群需要先移交管理员)。</li><li>添加或移除失败时必须返回具体原因,例如隐私设置或权限不足。</li><li>成员变化成功后写入群事件系统消息推送到会话内。</li></ul></div></td></tr><tr><td class="uc-field">功能交互</td><td class="uc-value" colspan="3"><ul><li>操作路径:群聊信息→编辑群头像、群名或群备注;点击“添加成员”搜索并添加;成员行三点菜单可移除成员;点击退出群聊离开当前群</li><li>群名称必填且最多50字符;群备注最多200字符;群头像仅支持J PG/PNG且最大2MB;每群最多500人;单次添加或移除最多10人</li></ul></td></tr><tr><td class="uc-field">边界与异常</td><td class="uc-value" colspan="3"><p>无权限时只读;退出群成功后会话状态按第三方结果更新。</p></td></tr><tr><td class="uc-field">埋点</td><td class="uc-value" colspan="3"><p><span class="tag">SCRM_GROUP_INFO_CHANGE_RESULT</span> 、<span class="tag">SCRM_GROUP_MEMBER_ACTION_RESULT</span></p></td></tr><tr><td class="uc-field">验收标准</td><td class="uc-value" colspan="3"><p>权限正确;成功操作同步群详情并生成群事件;失败保持原状态。</p></td></tr></tbody></table></div><div id="req-5-17"><div class="prd-h3">5.17 &nbsp;SCRM 客户端——会话工作台-群聊——管理员、邀请与入群审批</div><table class="uc-table"><tbody><tr><td class="uc-field">场景说明</td><td class="uc-value" colspan="3"><p>群管理员需要管理成员角色、邀请链接和入群申请。</p></td></tr><tr><td class="uc-field">核心逻辑</td><td class="uc-value" colspan="3"><div class="rule-block"><ul><li>支持成员与管理员角色调整;管理员数量以WhatsApp接口实际能力为准。</li><li>群成员列表中管理员置顶;当前账号不得对自身执行设为管理员或移除操作。</li><li>邀请链接支持复制和重置;重置后旧链接立即失效</li><li>支持实时推送待审批申请,可操作通过或拒绝。</li><li>角色变化、审批结果等群事件进入会话消息时间线(拒绝入群除外)</li></ul></div></td></tr><tr><td class="uc-field">功能交互</td><td class="uc-value" colspan="3"><ul><li>操作路径:群聊信息→非管理员成员三点菜单“设为群组管理员”或移除;添加成员弹窗中复制或重置邀请链接;入群申请区域通过或拒绝申请。</li></ul></td></tr><tr><td class="uc-field">边界与异常</td><td class="uc-value" colspan="3"><p>不得对无权限目标执行操作;审批重复提交需幂等。</p></td></tr><tr><td class="uc-field">埋点</td><td class="uc-value" colspan="3"><p><span class="tag">SCRM_GROUP_ROLE_CHANGE_RESULT</span> 、<span class="tag">SCRM_GROUP_REQUEST_RESULT</span></p></td></tr><tr><td class="uc-field">验收标准</td><td class="uc-value" colspan="3"><p>角色与审批结果同步正确;失败保持原状态并提示原因。</p></td></tr></tbody></table></div></div><div id="client-6"><div class="prd-h3">会话工作台 · 历史与同步</div><div id="req-5-18"><div class="prd-h3">5.18 &nbsp;SCRM 客户端——会话工作台-历史与同步——历史消息与实时同步</div><table class="uc-table"><tbody><tr><td class="uc-field">场景说明</td><td class="uc-value" colspan="3"><p>销售人员需要查看完整历史消息,并实时获得新消息和状态变化。</p></td></tr><tr><td class="uc-field">核心逻辑</td><td class="uc-value" colspan="3"><div class="rule-block"><ul><li>每个单聊和群聊支持拉取最近1000条历史消息,包含群事件。</li><li>首次或进入会话时按分页策略拉取;客户端按消息唯一标识去重。</li><li>联系人、会话、消息、群状态通过实时事件更新。</li><li>实时事件中断后,恢复时按最后同步时间补拉增量数据。</li></ul></div></td></tr><tr><td class="uc-field">功能交互</td><td class="uc-value" colspan="3"><ul><li>操作路径:打开会话自动加载首屏历史;向上滚动按每页100条继续加载;实时事件自动更新当前工作台。</li><li>每个会话最多加载最近1000条历史消息;实时事件5秒内可⻅;重连后60秒内完成增量恢复。</li></ul></td></tr><tr><td class="uc-field">边界与异常</td><td class="uc-value" colspan="3"><p>历史拉取失败可重试;实时事件重复、乱序和丢失需幂等与补偿。</p></td></tr><tr><td class="uc-field">埋点</td><td class="uc-value" colspan="3"><p><span class="tag">SCRM_HISTORY_LOAD_RESULT</span> 、<span class="tag">SCRM_REALTIME_SYNC_GAP</span></p></td></tr><tr><td class="uc-field">验收标准</td><td class="uc-value" colspan="3"><p>历史可连续加载;实时事件不重复生成对象;断线恢复可补⻬。</p></td></tr></tbody></table></div></div></div><div id="backend"><div class="prd-h2"><span class="sec-num">5.19-5.25</span>SCRM 后端服务</div><div id="backend-1"><div class="prd-h3">渠道接入服务</div><div id="req-5-19"><div class="prd-h3">5.19 &nbsp;SCRM 后端服务——渠道接入服务——WhatsApp 账号连接与状态同步</div><table class="uc-table"><tbody><tr><td class="uc-field">场景说明</td><td class="uc-value" colspan="3"><p>SCRM 后端服务需要统一调用WhatsApp 账号能力并同步账号状态。</p></td></tr><tr><td class="uc-field">核心逻辑</td><td class="uc-value" colspan="3"><div class="rule-block"><ul><li>提供二维码获取、过期刷新、登录结果查询、断开连接和账号状态查询能力。</li><li>优先接收状态Webhook,轮询作为兜底;状态事件携带账号唯一标识和变更时间。</li><li>状态变化写入账号状态,并推送给SCRM 客户端和相关内部服务。</li><li>与云账号管理共用账号标识和状态口径。</li></ul></div></td></tr><tr><td class="uc-field">边界与异常</td><td class="uc-value" colspan="3"><p>事件重复需幂等;第三方不可用时返回统一错误并记录告警。</p></td></tr><tr><td class="uc-field">验收标准</td><td class="uc-value" colspan="3"><p>登录与状态变化可闭环;账号状态在各消费方一致。</p></td></tr></tbody></table></div></div><div id="backend-2"><div class="prd-h3">客户与线索服务</div><div id="req-5-20"><div class="prd-h3">5.20 &nbsp;SCRM 后端服务——客户与线索服务——联系人同步与号码验证</div><table class="uc-table"><tbody><tr><td class="uc-field">场景说明</td><td class="uc-value" colspan="3"><p>SCRM 后端服务需要维护每个账号的WhatsApp联系人数据。</p></td></tr><tr><td class="uc-field">核心逻辑</td><td class="uc-value" colspan="3"><div class="rule-block"><ul><li>支持联系人分页全量、按上次同步时间增量和实时变更推送。</li><li>变更事件区分新增、更新、删除,并注明变化字段。</li><li>提供联系人详情、最后活跃状态、号码验证和联系人备注读写。</li><li>联系人数据按WhatsApp 账号隔离;相同号码在不同账号下可形成独立关系。</li></ul></div></td></tr><tr><td class="uc-field">边界与异常</td><td class="uc-value" colspan="3"><p>删除联系人不删除历史消息;增量断点丢失时触发全量校准。</p></td></tr><tr><td class="uc-field">验收标准</td><td class="uc-value" colspan="3"><p>联系人变更可追溯;号码验证结果明确;跨账号数据隔离。</p></td></tr></tbody></table></div></div><div id="backend-3"><div class="prd-h3">会话服务</div><div id="req-5-21"><div class="prd-h3">5.21 &nbsp;SCRM 后端服务——会话服务——会话列表与状态同步</div><table class="uc-table"><tbody><tr><td class="uc-field">场景说明</td><td class="uc-value" colspan="3"><p>SCRM 后端服务需要为客户端提供稳定的会话查询和状态操作能力。</p></td></tr><tr><td class="uc-field">核心逻辑</td><td class="uc-value" colspan="3"><div class="rule-block"><ul><li>提供按账号分页的会话列表、会话详情、搜索和状态筛选。</li><li>支持已读、未读、置顶、静音、归档操作,并同步第三方状态变化。</li><li>会话排序按置顶优先、最后活跃时间倒序。</li><li>新消息更新最后消息、最后时间和未读数。</li></ul></div></td></tr><tr><td class="uc-field">边界与异常</td><td class="uc-value" colspan="3"><p>第三方状态写入失败时不得返回成功;重复状态事件幂等。</p></td></tr><tr><td class="uc-field">验收标准</td><td class="uc-value" colspan="3"><p>查询和状态操作结果一致;新消息可驱动会话列表更新。</p></td></tr></tbody></table></div><div id="req-5-22"><div class="prd-h3">5.22 &nbsp;SCRM 后端服务——会话服务——消息发送与回执</div><table class="uc-table"><tbody><tr><td class="uc-field">场景说明</td><td class="uc-value" colspan="3"><p>SCRM 后端服务需要统一发送消息并维护完整回执链路。</p></td></tr><tr><td class="uc-field">核心逻辑</td><td class="uc-value" colspan="3"><div class="rule-block"><ul><li>对各类消息提供统一发送入口或类型适配。</li><li>发送请求先生成SCRM 消息唯一标识,并保存第三方消息标识映射。</li><li>接收已发送、已送达、已读和失败回执;已读回执需保存精确时间。</li><li>重发复用原业务消息标识,并记录重试次数。</li><li>校验文本、文件、附件数量和语音时⻓限制;组合消息任一部分失败时整组失败并整体重试。</li></ul></div></td></tr><tr><td class="uc-field">边界与异常</td><td class="uc-value" colspan="3"><p>回执乱序不使状态倒退;第三方超时按未知结果处理,避免直接重复发送。</p></td></tr><tr><td class="uc-field">验收标准</td><td class="uc-value" colspan="3"><p>消息状态链完整;重试不生成重复业务消息;精确已读时间可消费。</p></td></tr></tbody></table></div><div id="req-5-23"><div class="prd-h3">5.23 &nbsp;SCRM 后端服务——会话服务——消息操作能力</div><table class="uc-table"><tbody><tr><td class="uc-field">场景说明</td><td class="uc-value" colspan="3"><p>SCRM 后端服务需要支撑客户端消息操作并保持双方状态一致。</p></td></tr><tr><td class="uc-field">核心逻辑</td><td class="uc-value" colspan="3"><div class="rule-block"><ul><li>提供编辑、置顶、撤回、引用、转发和表情回复能力适配。</li><li>每次操作校验消息归属、操作权限、消息状态和时限。</li><li>操作成功后更新原消息或关联关系,并通过实时事件推送。</li><li>校验编辑15分钟、双方撤回2分钟、单次选择50条、单次转发20条消息至5个目标会话的限制。</li></ul></div></td></tr><tr><td class="uc-field">边界与异常</td><td class="uc-value" colspan="3"><p>第三方不支持的操作返回明确能力错误;重复操作需幂等。</p></td></tr><tr><td class="uc-field">验收标准</td><td class="uc-value" colspan="3"><p>操作权限与时限正确;成功结果实时同步;失败不修改原记录。</p></td></tr></tbody></table></div><div id="req-5-24"><div class="prd-h3">5.24 &nbsp;SCRM 后端服务——会话服务——群组能力与群事件</div><table class="uc-table"><tbody><tr><td class="uc-field">场景说明</td><td class="uc-value" colspan="3"><p>SCRM 后端服务需要提供完整群组能力并记录群事件。</p></td></tr><tr><td class="uc-field">核心逻辑</td><td class="uc-value" colspan="3"><div class="rule-block"><ul><li>提供群列表、群详情、创建群、修改群资料、成员增删、退出群和角色调整。</li><li>提供入群申请查询、通过和拒绝能力。</li><li>群事件覆盖群资料变更、成员加入/退出/移除、角色调整、群主转让和群解散;必须包含操作者、时间、动作和目标,并转换为系统消息进入时间线。</li><li>管理员数量和角色规则以第三方能力为准,不在SCRM 写死。</li><li>校验群资料、群成员总数和单次成员操作限制;创建时间只读,不接受修改。</li></ul></div></td></tr><tr><td class="uc-field">边界与异常</td><td class="uc-value" colspan="3"><p>群操作失败保持原状态;重复群事件按事件标识去重。</p></td></tr><tr><td class="uc-field">验收标准</td><td class="uc-value" colspan="3"><p>群操作结果、群详情和系统消息一致;权限错误可识别。</p></td></tr></tbody></table></div><div id="req-5-25"><div class="prd-h3">5.25 &nbsp;SCRM 后端服务——会话服务——历史消息与异常兜底</div><table class="uc-table"><tbody><tr><td class="uc-field">场景说明</td><td class="uc-value" colspan="3"><p>SCRM 后端服务需要保证历史可追溯,并对异常数据提供补偿。</p></td></tr><tr><td class="uc-field">核心逻辑</td><td class="uc-value" colspan="3"><div class="rule-block"><ul><li>按每页100条分页拉取并存储每个会话最近1000条历史消息,包含群事件。</li><li>实时事件中断后,按最后同步游标补拉联系人、会话、消息和群状态。</li><li>媒体资源保存可访问状态;失效时返回明确错误。</li><li>超过100MB的入站文件记录不可同步异常;媒体资源失效仅返回失败,不自动刷新;不可补拉场景记录异常供监控和人工排查。</li></ul></div></td></tr><tr><td class="uc-field">边界与异常</td><td class="uc-value" colspan="3"><p>补拉数据按第三方消息标识和业务消息标识双重去重。</p></td></tr><tr><td class="uc-field">验收标准</td><td class="uc-value" colspan="3"><p>历史连续、去重正确;同步中断后可恢复;不可恢复异常可查询。</p></td></tr></tbody></table></div></div></div></section><section class="prd-chapter" id="ch6"><div class="prd-h1"><span class="ch-num">第六章</span>系统改造与依赖</div><ul class="prd-ul"><li>所有WhatsApp业务数据必须带 WhatsApp_account_id ,按当前登录用户可使用账号范围隔离。</li><li>消息、会话、联系人、群组和群事件需保留SCRM 唯一标识与第三方唯一标识映射。</li><li>群资料和成员操作权限以第三方返回角色与能力为准。</li></ul><table class="prd-table"><thead><tr><th>类型</th><th>要求</th></tr></thead><tbody><tr><td>性能</td><td>会话列表和搜索 P95 响应不超过 2 秒；实时事件 5 秒内可见；重连后 60 秒内完成增量恢复</td></tr><tr><td>幂等</td><td>消息回执、会话状态、群事件和补拉数据需按唯一标识幂等处理</td></tr><tr><td>数据隔离</td><td>不同 WhatsApp 账号下的联系人、会话、消息和群组不得混排或串读</td></tr></tbody></table></section><section class="prd-chapter" id="version"><div class="prd-h1"><span class="ch-num">版本</span>版本记录</div><table class="prd-table"><thead><tr><th>版本</th><th>日期</th><th>说明</th></tr></thead><tbody><tr><td>V1.1</td><td>2026-06-04</td><td>原 PDF 版本</td></tr><tr><td>V1.2</td><td>2026-06-05</td><td>HTML 终版整理；文件限制口径统一为 100MB</td></tr></tbody></table></section></div>
+  </main>
+</div>
+<script>
+  mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+  const content = document.getElementById('content');
+  const navLinks = document.querySelectorAll('#nav .nav-item[href]');
+  navLinks.forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const id = link.getAttribute('href').slice(1);
+      const target = document.getElementById(id);
+      if (target) {
+        const top = target.getBoundingClientRect().top - content.getBoundingClientRect().top + content.scrollTop;
+        content.scrollTo({ top: top - 20, behavior: 'smooth' });
+      }
+      navLinks.forEach(n => n.classList.remove('active'));
+      link.classList.add('active');
+    });
+  });
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const match = document.querySelector(`#nav .nav-item[href="#${entry.target.id}"]`);
+        if (match) {
+          navLinks.forEach(n => n.classList.remove('active'));
+          match.classList.add('active');
+          match.scrollIntoView({ block: 'nearest' });
+        }
+      }
+    });
+  }, { root: content, rootMargin: '-15% 0px -75% 0px', threshold: 0 });
+  document.querySelectorAll('[id]').forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
